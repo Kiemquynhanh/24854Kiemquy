@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Kiểm quỹ nhanh</title>
+    <style>
+        th, td {
+            border: 1px solid black;
+            text-align: center;
+            padding: 8px;
+        }
+
+        th {
+            background-color: silver;
+            color: black;
+            font-weight: bold;
+            text-align: left;
+            width: 50px; /* Độ rộng cột Mệnh giá và Tổng cộng */
+        }
+
+        td:nth-child(2) {
+            width: 30px; /* Độ rộng cột Số lượng */
+        }
+
+        table {
+            border-collapse: collapse;
+            width: 140px; /* Độ rộng bảng */
+            margin: 20px 0 0 20px;
+        }
+
+        th.title {
+            display: none;
+        }
+
+        tr.total {
+            font-weight: bold;
+            color: red;
+            text-transform: uppercase;
+        }
+    </style>
+</head>
+<body>
+    <table>
+        <thead>
+            <tr>
+                <th class="title" colspan="3">Kiểm quỹ nhanh</th>
+            </tr>
+            <tr>
+                <th>Mệnh giá</th>
+                <th>Số lượng</th>
+                <th>Tổng cộng</th>
+            </tr>
+        </thead>
+        <tbody id="moneyTable">
+            <!-- Các hàng mệnh giá và số lượng -->
+        </tbody>
+        <tfoot>
+            <tr class="total">
+                <td colspan="3">Tổng cộng: 0</td>
+            </tr>
+        </tfoot>
+    </table>
+
+    <script>
+        function calculateTotal() {
+            const denominations = [500000, 200000, 100000, 50000, 20000, 10000, 5000, 2000, 1000, 500];
+            let grandTotal = 0;
+
+            denominations.forEach(denomination => {
+                const qty = document.getElementById(`qty${denomination}`);
+                const total = document.getElementById(`total${denomination}`);
+                const subtotal = (qty.valueAsNumber || 0) * denomination;
+                total.textContent = subtotal.toLocaleString('vi-VN');
+                grandTotal += subtotal;
+            });
+
+            const totalRow = document.querySelector('.total');
+            totalRow.innerHTML = `<td colspan="3">Tổng cộng: ${grandTotal.toLocaleString('vi-VN')}</td>`;
+        }
+
+        // Tạo các hàng cho mệnh giá và số lượng tương ứng
+        const moneyTable = document.getElementById('moneyTable');
+        const denominations = [500000, 200000, 100000, 50000, 20000, 10000, 5000, 2000, 1000, 500];
+
+        denominations.forEach(denomination => {
+            const row = document.createElement('tr');
+
+            const denominationCell = document.createElement('td');
+            denominationCell.textContent = denomination.toLocaleString('vi-VN');
+            row.appendChild(denominationCell);
+
+            const quantityCell = document.createElement('td');
+            const quantityInput = document.createElement('input');
+            quantityInput.type = 'number';
+            quantityInput.style.width = '30px'; // Độ rộng ô nhập liệu số lượng
+            quantityInput.min = '0';
+            quantityInput.id = `qty${denomination}`;
+            quantityInput.oninput = calculateTotal;
+            quantityCell.appendChild(quantityInput);
+            row.appendChild(quantityCell);
+
+            const totalCell = document.createElement('td');
+            const totalSpan = document.createElement('span');
+            totalSpan.id = `total${denomination}`;
+            totalSpan.textContent = '0';
+            totalCell.appendChild(totalSpan);
+            row.appendChild(totalCell);
+
+            moneyTable.appendChild(row);
+        });
+    </script>
+</body>
+</html>
